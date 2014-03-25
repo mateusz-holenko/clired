@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+import urwid
+import logging
+from os.path import expanduser
+
+from widgets.CRMainView import CRMainView
+from utils.CRRedmineProvider import CRRedmineProvider
+from utils.settings import settings
+
+
+logging.basicConfig(filename='clired.log',level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+settings = settings()
+settings.read('{0}/.cliredrc'.format(expanduser('~')))
+
+provider = CRRedmineProvider(settings)
+main = CRMainView(provider)
+provider.set_status_handler(main.status)
+
+def exit_on_cr(input):
+    logger.debug("Key pressed: " + str(input))
+    if input == 'q':
+        raise urwid.ExitMainLoop()
+
+palette = [
+    ('issue-progress_completed', 'dark green', 'light blue'),
+    ('issue-progress_incompleted', 'black', 'white'),
+    ('issues_index-normal', 'dark green', 'black'),
+    ('issues_index-focused','black', 'dark green'),
+    ('status_line-warning', 'yellow', 'default'),
+    ('status_line-error',   'dark red',    'default'),
+    ('status_line-success', 'white',    'default'),
+    ('status_line-info',    'light blue',   'default')
+]
+
+loop = urwid.MainLoop(main, palette, unhandled_input=exit_on_cr)
+loop.run()
