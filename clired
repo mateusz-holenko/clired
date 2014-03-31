@@ -1,22 +1,52 @@
 #!/usr/bin/python3
+import sys
 import urwid
 import logging
-from os.path import expanduser
-
+import getpass
+import argparse
 from widgets.CRMainView import CRMainView
+from widgets.CRIssueView import CRIssueView
 from utils.CRRedmineProvider import CRRedmineProvider
-from utils.settings import settings
+import utils.CRSettings
 
 
 logging.basicConfig(filename='clired.log',level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-settings = settings()
-settings.read('{0}/.cliredrc'.format(expanduser('~')))
+#
+# Parsing command-line arguments
+#
+parser = argparse.ArgumentParser(description="Redmine CLI client")
+parser.add_argument('issue', type=int, nargs='?')
+parser.add_argument('-s', '--server', type=str)
+parser.add_argument('-p', '--project', type=str)
+parser.add_argument('-u', '--username', type=str)
+argv = parser.parse_args()
+
+settings = utils.CRSettings.get_settings()
+
+if argv.server:
+    print(argv.server)
+    settings.set_value('server_uri', argv.server)
+if argv.project:
+    print(argv.project)
+    settings.set_value('project', argv.project)
+if argv.username:
+    print(argv.username)
+    settings.set_value('username', argv.username)
+
+if not settings.has_value('password'):
+    settings.set_value('password', getpass.getpass())
 
 provider = CRRedmineProvider(settings)
-main = CRMainView(provider)
-provider.set_status_handler(main.status)
+
+if len(sys.argv) == 1:
+    main = CRMainView(provider)
+    provider.set_status_handler(main.status)
+else:
+    logger.debug("Trying to fetch issue #{0}".format(sys.argv[1]))
+    issue = provider.issue(sys.argv[1])
+    main = CRIssueView(issue)
 
 def exit_on_cr(input):
     logger.debug("Key pressed: " + str(input))
