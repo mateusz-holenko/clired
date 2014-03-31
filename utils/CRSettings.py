@@ -1,9 +1,23 @@
 import logging
+from os.path import expanduser
 
 logger = logging.getLogger(__name__)
+path = '{0}/.cliredrc'.format(expanduser('~'))
+
+_settings = None
+
+def get_settings():
+    global _settings
+    if _settings is None:
+        _settings = CRSettings()
+        try:
+            _settings.read()
+        except IOError:
+            logger.warning("Error while reading configuration file: {0}".format(path))
+    return _settings
 
 
-class settings(object):
+class CRSettings(object):
 
     def __init__(self):
         self._dict = {}
@@ -16,7 +30,13 @@ class settings(object):
         logger.debug("Variable {0} set to {1}".format(name, value))
         self._dict[name] = value
 
-    def read(self, file):
+    def has_value(self, name):
+        return name in self._dict
+
+    def read(self, file=None):
+        if file is None:
+            file = path
+
         f = open(file, 'r')
         for line in f:
             line = line.strip()
