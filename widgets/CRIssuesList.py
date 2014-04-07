@@ -10,7 +10,7 @@ class CRIssuesList(CRListBox):
 
     def __init__(self):
         self.__walker = urwid.SimpleFocusListWalker([])
-        self.__formatter = CRIssueLineFormatter("%i %a %A %T")
+        self.__formatter = CRIssueLineFormatter("%i %a %A %100T")
         super(CRIssuesList, self).__init__(self.__walker)
 
     def keypress(self, size, key):

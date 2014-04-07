@@ -26,13 +26,10 @@ argv = parser.parse_args()
 settings = utils.CRSettings.get_settings()
 
 if argv.server:
-    print(argv.server)
     settings.set_value('server_uri', argv.server)
 if argv.project:
-    print(argv.project)
     settings.set_value('project', argv.project)
 if argv.username:
-    print(argv.username)
     settings.set_value('username', argv.username)
 
 if not settings.has_value('password'):
@@ -40,12 +37,12 @@ if not settings.has_value('password'):
 
 provider = CRRedmineProvider(settings)
 
-if len(sys.argv) == 1:
+if argv.issue is None:
     main = CRMainView(provider)
     provider.set_status_handler(main.status)
 else:
-    logger.debug("Trying to fetch issue #{0}".format(sys.argv[1]))
-    issue = provider.issue(sys.argv[1])
+    logger.debug("Trying to fetch issue #{0}".format(argv.issue))
+    issue = provider.issue(argv.issue)
     main = CRIssueView(issue)
 
 def exit_on_cr(input):
@@ -54,14 +51,14 @@ def exit_on_cr(input):
         raise urwid.ExitMainLoop()
 
 palette = [
-    ('issue-progress_completed', 'dark green', 'light blue'),
-    ('issue-progress_incompleted', 'black', 'white'),
-    ('issues_index-normal', 'dark green', 'black'),
-    ('issues_index-focused','black', 'dark green'),
-    ('status_line-warning', 'yellow', 'default'),
-    ('status_line-error',   'dark red',    'default'),
-    ('status_line-success', 'white',    'default'),
-    ('status_line-info',    'light blue',   'default')
+    ('issue-progress_completed'   , 'dark green' , 'light blue' ) ,
+    ('issue-progress_incompleted' , 'black'      , 'white'      ) ,
+    ('issues_index-normal'        , 'dark green' , ''           ) ,
+    ('issues_index-focused'       , 'black'      , 'dark green' ) ,
+    ('status_line-warning'        , 'yellow'     , 'default'    ) ,
+    ('status_line-error'          , 'dark red'   , 'default'    ) ,
+    ('status_line-success'        , 'white'      , 'default'    ) ,
+    ('status_line-info'           , 'light blue' , 'default'    )
 ]
 
 loop = urwid.MainLoop(main, palette, unhandled_input=exit_on_cr)

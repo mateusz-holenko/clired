@@ -6,6 +6,7 @@ path = '{0}/.cliredrc'.format(expanduser('~'))
 
 _settings = None
 
+
 def get_settings():
     global _settings
     if _settings is None:
@@ -27,7 +28,6 @@ class CRSettings(object):
         return self._dict.get(name, default)
 
     def set_value(self, name, value):
-        logger.debug("Variable {0} set to {1}".format(name, value))
         self._dict[name] = value
 
     def has_value(self, name):

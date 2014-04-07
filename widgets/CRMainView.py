@@ -10,13 +10,12 @@ logger = logging.getLogger(__name__)
 class CRMainView(urwid.Frame):
 
     def __init__(self, provider):
-        self.__header = urwid.Text("CliRed v. 0.0.1")
         self.__content = urwid.Filler(urwid.Text(""))
         self.status = CRStatusLine('')
         self._issues_view = CRIssuesView(provider)
         self._issues_view.set_selection_handler(self.show_issue)
 
-        super(CRMainView, self).__init__(self.__content, self.__header, self.status)
+        super(CRMainView, self).__init__(self.__content, None, self.status)
         self.show_issues()
 
     def show_issues(self):
