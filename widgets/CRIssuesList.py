@@ -15,22 +15,22 @@ class CRIssuesList(CRListBox):
 
     def keypress(self, size, key):
         logger.debug("Key pressed: " + str(key))
+
         if key == 'j':
             self.focus_next(size)
         elif key == 'k':
             self.focus_prev(size)
         elif key == 'page down':
             self.focus_next_page(size)
-            key = None
         elif key == 'page up':
             self.focus_prev_page(size)
-            key = None
         elif key == 'enter':
             #if hasattr(self, 'on_issue_selected'):
             self.on_issue_selected(self.focus.issue)
-            #key = None
+        else:
+            return super(CRIssuesList, self).keypress(size, key)
 
-        return super(CRIssuesList, self).keypress(size, key)
+        self._invalidate()
 
     def add(self, issue):
         self.__walker.append(CRIssueItem(issue, self.__formatter))

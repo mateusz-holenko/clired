@@ -46,7 +46,7 @@ else:
     main = CRIssueView(issue)
 
 def exit_on_cr(input):
-    logger.debug("Key pressed: " + str(input))
+    logger.debug("Unhandled key pressed: " + str(input))
     if input == 'q':
         raise urwid.ExitMainLoop()
 

@@ -21,7 +21,8 @@ class CRRedmineProvider(object):
             settings.value('server_uri'),
             username=settings.value('username'),
             password=settings.value('password'),
-            requests=dict(verify=False))
+            requests=dict(verify=False),
+            raise_attr_exception=False)
 
     def issues(self, handler):
         if not hasattr(self, '_issues') or self._issues is None:

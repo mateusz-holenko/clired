@@ -2,15 +2,15 @@ import urwid
 import utils
 
 
-class DoubleListBox(urwid.ListBox):
+class CRIssueJournal(urwid.ListBox):
 
     def __init__(self, issue):
         self._content = []
 
         for journal in issue.journals:
-            self._content.append(DoubleListBoxItem(journal))
+            self._content.append(CRIssueJournalListItem(journal))
 
-        super(DoubleListBox, self).__init__(urwid.SimpleFocusListWalker([]))
+        super(CRIssueJournal, self).__init__(urwid.SimpleFocusListWalker([]))
 
     def render(self, size, focus=False):
         self.body.clear()
@@ -24,10 +24,10 @@ class DoubleListBox(urwid.ListBox):
                 self.body.append(urwid.Text(''))
                 self.body.append(urwid.Text(''))
 
-        return super(DoubleListBox, self).render(size, focus)
+        return super(CRIssueJournal, self).render(size, focus)
 
 
-class DoubleListBoxItem(urwid.Columns):
+class CRIssueJournalListItem(urwid.Columns):
 
     def __init__(self, journalItem):
 
@@ -40,7 +40,7 @@ class DoubleListBoxItem(urwid.Columns):
             details_and_notes.append(urwid.Text(''))
         details_and_notes.append(urwid.Text(journalItem.notes))
 
-        super(DoubleListBoxItem, self).__init__([(25, urwid.Pile(author_and_date)), (urwid.Pile(details_and_notes))])
+        super(CRIssueJournalListItem, self).__init__([(25, urwid.Pile(author_and_date)), (urwid.Pile(details_and_notes))])
 
 
 class CRIssueJournalItemDetail(urwid.Text):
