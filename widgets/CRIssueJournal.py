@@ -47,18 +47,27 @@ class CRIssueJournalItemDetail(urwid.Text):
 
     def __init__(self, detail):
         name = detail['name']
-        oldv = str(detail['old_value'])
         newv = str(detail['new_value'])
-
+        
         provider = utils.CRRedmineProvider.get_provider()
         resolver = {
             'status_id': ('Status', provider.issue_status),
             'priority_id': ('Priority', provider.issue_priority)
         }
 
-        if detail['name'] in resolver:
-            name = resolver[detail['name']][0]
-            oldv = resolver[detail['name']][1](detail['old_value'])
-            newv = resolver[detail['name']][1](detail['new_value'])
+        if 'old_value' in detail:
+            oldv = str(detail['old_value'])
 
-        super(CRIssueJournalItemDetail, self).__init__("{0} changed from {1} to {2}".format(name, oldv, newv))
+            if detail['name'] in resolver:
+                name = resolver[detail['name']][0]
+                oldv = resolver[detail['name']][1](detail['old_value'])
+                newv = resolver[detail['name']][1](detail['new_value'])
+
+            super(CRIssueJournalItemDetail, self).__init__("{0} changed from {1} to {2}".format(name, oldv, newv))
+        else:
+
+            if detail['name'] in resolver:
+                name = resolver[detail['name']][0]
+                newv = resolver[detail['name']][1](detail['new_value'])
+
+            super(CRIssueJournalItemDetail, self).__init__("{0} set to {1}".format(name, newv))
