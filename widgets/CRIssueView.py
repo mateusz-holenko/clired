@@ -4,6 +4,7 @@ from widgets.CRTable import CRFlowTable
 from widgets.CRScrollArea import CRScrollArea
 #import utils.CRRedmineProvider
 from widgets.CRIssueJournal import CRIssueJournal
+from utils.CRAttrHelper import attribute
 
 logger = logging.getLogger(__name__)
 
@@ -75,21 +76,22 @@ class CRIssueMeta(urwid.Pile):
 
     def __init__(self, issue):
 
-        status         = getattr(getattr(issue, 'status', None), 'name', '-')
-        start_date     = str(getattr(issue, 'start_date', '-'))
-        priority       = getattr(getattr(issue, 'priority', None), 'name', '-')
-        due_date       = getattr(issue, 'due_date', '-')
-        assigned_to    = getattr(getattr(issue, 'assigned_to', None), 'name', '-')
-        done_ratio     = getattr(issue, 'done_ratio', '-')
-        category       = getattr(getattr(issue, 'category', None), 'name', '-')
-        spent_time     = getattr(issue, 'spent_hours', '-')
-        target_version = getattr(getattr(issue, 'fixed_version', None), 'name', '-')
+        status         = attribute(attribute(issue, 'status', None), 'name', '-')
+        start_date     = str(attribute(issue, 'start_date', '-'))
+        priority       = attribute(attribute(issue, 'priority', None), 'name', '-')
+        due_date       = attribute(issue, 'due_date', '-')
+        assigned_to    = attribute(attribute(issue, 'assigned_to', None), 'name', '-')
+        done_ratio     = attribute(issue, 'done_ratio', '-')
+        category       = attribute(attribute(issue, 'category', None), 'name', '-')
+        spent_time     = str(attribute(issue, 'spent_hours', '-'))
+        target_version = attribute(attribute(issue, 'fixed_version', None), 'name', '-')
+        logger.debug("Priority is {0}".format(due_date))
 
         table = CRFlowTable([15, 0, 15, 0])
         table.add(["Status:", status, "Start date:", start_date])
-        #table.add(["Priority:", priority, "Due date:", due_date])
+        table.add(["Priority:", priority, "Due date:", due_date])
         table.add(["Assignee:", assigned_to, "% Done:", "{0} %".format(done_ratio)])
-        #table.add(["Category:", category, "Spent time:", spent_time])
+        table.add(["Category:", category, "Spent time:", spent_time])
         table.add(["Target:", target_version, "", ""])
 
         if hasattr(issue, 'custom_fields'):
