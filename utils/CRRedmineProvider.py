@@ -48,5 +48,18 @@ class CRRedmineProvider(object):
 
         return self._priorities.get(id).name
 
+    def tracker(self, id):
+        if not hasattr(self, '_trackers') or self._trackers is None:
+            self._trackers = self._redmine.tracker.all()
+
+        return self._trackers.get(id).name
+
+    def target_version(self, id):
+        if not hasattr(self, '_targets') or self._targets is None:
+            project = self._redmine.project.get(self._settings.value('project'))
+            self._targets = project.versions
+
+        return self._targets.get(id).name
+
     def set_status_handler(self, status):
         self._status = status

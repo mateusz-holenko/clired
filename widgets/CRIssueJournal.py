@@ -52,7 +52,10 @@ class CRIssueJournalItemDetail(urwid.Text):
         provider = utils.CRRedmineProvider.get_provider()
         resolver = {
             'status_id': ('Status', provider.issue_status),
-            'priority_id': ('Priority', provider.issue_priority)
+            'priority_id': ('Priority', provider.issue_priority),
+            'done_ratio' : ('% Done', lambda x: str(x)),
+            'tracker_id' : ('Tracker', provider.tracker),
+            'fixed_version_id': ('Target version', provider.target_version)
         }
 
         if 'old_value' in detail:
