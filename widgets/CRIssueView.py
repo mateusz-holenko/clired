@@ -92,7 +92,7 @@ class CRIssueMeta(urwid.Pile):
         #table.add(["Category:", category, "Spent time:", spent_time])
         table.add(["Target:", target_version, "", ""])
 
-        if hasattr(issue, 'custom_fields'):
+        if hasattr(issue, 'custom_fields') and issue.custom_fields is not None:
             for cf in issue.custom_fields:
                 value = getattr(cf, 'value')
                 table.add(["{0}:".format(cf.name), value if value is not None else '-', "", ""])
