@@ -101,7 +101,11 @@ class CRIssueLineFormatter(object):
             caps = match.group("caps") == '!'
             count = int(match.group("count")) if match.group("count") != '' else self.__fields[index][0]
 
-            value = str(eval('issue.' + self.__fields[index][1]))
+            try:
+                value = str(eval('issue.' + self.__fields[index][1]))
+            except AttributeError:
+                value = "-"
+
             if len(value) > count:
                 value = value[:count]
             else:
