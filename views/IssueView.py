@@ -19,6 +19,8 @@ class IssueView(View):
             self._widget.set_body(DescriptionElement(self._issue))
         elif key == 'n':
             self._widget.set_body(JournalElement(self._issue))
+        elif key == 'a':
+            self._widget.set_body(AttachmentsElement(self._issue))
         else:
             return False
         return True
@@ -153,3 +155,22 @@ class JournalItemDetail(urwid.Text):
             text = "{0} set to {1}".format(name, newv)
 
         super(JournalItemDetail, self).__init__(text)
+
+
+class AttachmentsElement(urwid.ListBox):
+    def __init__(self, issue):
+        content = []
+        if len(issue.attachments) == 0:
+            content.append(urwid.Text(":: No attachments ::"))
+        else:
+            for att in issue.attachments:
+                content.append(urwid.Columns(
+                    [
+                        (30, urwid.Text(att.filename)),
+                        (15, urwid.Text(str(att.filesize))),
+                        (15, urwid.Text(att.author.name)),
+                        (urwid.Text(str(att.created_on)))
+                    ]))
+#content_url
+
+        super(AttachmentsElement, self).__init__(urwid.SimpleFocusListWalker(content))
