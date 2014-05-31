@@ -129,7 +129,8 @@ class JournalItemDetail(urwid.Text):
             'priority_id':      ('Priority',       provider.issue_priority),
             'done_ratio':       ('% Done',         lambda x: str(x)),
             'tracker_id':       ('Tracker',        provider.tracker),
-            'fixed_version_id': ('Target version', provider.target_version)
+            'fixed_version_id': ('Target version', provider.target_version),
+            'assigned_to_id':   ('Assignee',       provider.user)
         }
 
         dn = detail['name']

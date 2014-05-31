@@ -62,5 +62,12 @@ class Redmine(object):
 
         return self._targets.get(id).name
 
+    def user(self, id):
+        if not hasattr(self, '_users') or self._users is None:
+            self._users = {}
+        if not id in self._users:
+            self._users[id] = self._redmine.user.get(id)
+        return "{0} {1}".format(self._users[id].firstname, self._users[id].lastname)
+
     def set_status_handler(self, status):
         self._status = status
