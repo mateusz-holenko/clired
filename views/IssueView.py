@@ -58,13 +58,26 @@ class MetadataElement(urwid.ListBox):
         items['Created'] =    self.resolve(issue, 'created_on')
         items['Updated'] =    self.resolve(issue, 'updated_on')
 
+        order = ['Status', 'Priority', 'Author', 'Assignee', '',
+                 'Created', 'Updated', '',
+                 'Start date', 'Due date', '% Done', 'Spent time', '',
+                 'Category', 'Target', '']
+
+        content = []
+        width = 15
+
+        for element in order:
+            if element == "":
+                content.append(urwid.Text(""))
+            else:
+                content.append(urwid.Columns([(width, urwid.Text(element + ":")), (urwid.Text(items[element]))]))
+
         if hasattr(issue, 'custom_fields') and issue.custom_fields is not None:
             for cf in issue.custom_fields:
-                value = getattr(cf, 'value')
-                items[cf.name] = value if value is not None else "-"
+                value = self.resolve(cf, 'value')
+                content.append(urwid.Columns([(width, urwid.Text(cf.name + ":")), (urwid.Text(value))]))
 
-        walker = urwid.SimpleFocusListWalker([urwid.Text("{0}: {1}".format(l, items[l])) for l in items])
-        super(MetadataElement, self).__init__(walker)
+        super(MetadataElement, self).__init__(urwid.SimpleFocusListWalker(content))
 
     def resolve(self, issue, *args):
         curr = issue
