@@ -21,6 +21,8 @@ class IssueView(View):
             self._widget.set_body(JournalElement(self._issue))
         elif key == 'a':
             self._widget.set_body(AttachmentsElement(self._issue))
+        elif key == 'w':
+            self._widget.set_body(WatchersElement(self._issue))
         else:
             return False
         return True
@@ -174,3 +176,14 @@ class AttachmentsElement(urwid.ListBox):
 #content_url
 
         super(AttachmentsElement, self).__init__(urwid.SimpleFocusListWalker(content))
+
+
+class WatchersElement(urwid.ListBox):
+    def __init__(self, issue):
+        content = []
+        if len(issue.watchers) == 0:
+            content.append(urwid.Text(":: No watchers ::"))
+        else:
+            content = [ urwid.Text(w.name) for w in issue.watchers ]
+
+        super(WatchersElement, self).__init__(urwid.SimpleFocusListWalker(content))
