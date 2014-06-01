@@ -5,8 +5,10 @@ import urwid
 import logging
 import getpass
 import argparse
+import urwid.signals
 
 from views.IssueView import IssueView
+from views.MyPageView import MyPageView
 import core.Redmine
 
 
@@ -23,11 +25,22 @@ parser.add_argument('-p', '--project', type=str)
 parser.add_argument('-u', '--username', type=str)
 argv = parser.parse_args()
 
-if argv.issue is None:
-    raise Exception("Issue number has to be passed as an argument")
+#if argv.issue is None:
+#    raise Exception("Issue number has to be passed as an argument")
 
-i = core.Redmine.instance().issue(argv.issue)
-iv = IssueView(i)
+def issue_selected(issue):
+    urwid.MainLoop.widget = IssueView(issue)
+
+def xxx_handler():
+    print ('hejka')
+    import pdb
+    pdb.set_trace()
+
+#i = core.Redmine.instance().issue(argv.issue)
+#iv = IssueView(i)
+my_page = MyPageView(core.Redmine.instance().my_issues(True))
+urwid.signals.register_signal(my_page.__class__, 'xxx')
+urwid.signals.connect_signal(my_page, 'xxx', xxx_handler)
 
 def exit_on_cr(input):
     if iv.key_pressed(input):
@@ -37,7 +50,17 @@ def exit_on_cr(input):
         raise urwid.ExitMainLoop()
     logger.debug("Unhandled key pressed: " + str(input))
 
+palette = [
+    ('issue-progress_completed'   , 'dark green' , 'light blue' ) ,
+    ('issue-progress_incompleted' , 'black'      , 'white'      ) ,
+    ('issues_index-normal'        , 'dark green' , ''           ) ,
+    ('issues_index-focused'       , 'black'      , 'dark green' ) ,
+    ('status_line-warning'        , 'yellow'     , 'default'    ) ,
+    ('status_line-error'          , 'dark red'   , 'default'    ) ,
+    ('status_line-success'        , 'white'      , 'default'    ) ,
+    ('status_line-info'           , 'light blue' , 'default'    )
+]
 
-loop = urwid.MainLoop(iv.get_widget(), None, unhandled_input=exit_on_cr)
+loop = urwid.MainLoop(my_page.get_widget(), palette, unhandled_input=exit_on_cr)
 loop.run()
 print("Good bye!")

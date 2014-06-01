@@ -25,14 +25,22 @@ class Redmine(object):
             requests=dict(verify=False),
             raise_attr_exception=False)
 
-    def issues(self, handler):
-        if not hasattr(self, '_issues') or self._issues is None:
-            self._status.info("Downloading issues...")
-            project = self._redmine.project.get(self._settings.value('project'))
-            self._issues = project.issues
-            self._status.success("Download completed.")
+    def project(self):
+        if not hasattr(self, '_project') or self._project is None:
+            self._project = self._redmine.project.get(self._settings.value('project'))
+        return self._project
 
-        handler(self._issues)
+    def my_issues(self, show_closed=False):
+        if not hasattr(self, '_my_issues') or self._my_issues is None:
+            self._my_issues = {}
+        if show_closed not in self._my_issues:
+            self._my_issues[show_closed] = self._redmine.issue.filter(assigned_to_id='me', status_id='open' if not show_closed else '*')
+        return self._my_issues[show_closed]
+
+    def issues(self):
+        if not hasattr(self, '_issues') or self._issues is None:
+            self._issues = self.project().issues
+        return self._issues
 
     def issue(self, id):
         return self._redmine.issue.get(id)
