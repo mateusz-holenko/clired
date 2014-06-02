@@ -30,20 +30,31 @@ conf = core.Configuration.instance()
 if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
 
+issue_view = None
 def issue_selected(issue):
-    loop.widget = IssueView(issue).get_widget()
+    global issue_view
+    issue_view = IssueView(issue)
+    loop.widget = issue_view.get_widget()
 
 my_page = MyPageView(core.Redmine.instance().my_issues(False))
 urwid.signals.connect_signal(my_page, 'selected', issue_selected)
 
 def exit_on_cr(input):
+    global issue_view
     if input == 'q':
         if loop.widget == my_page.get_widget():
             raise urwid.ExitMainLoop()
         else:
             loop.widget = my_page.get_widget()
+            issue_view = None
+    else:
+        if issue_view is not None:
+            res = issue_view.key_pressed(input)
+        else:
+            res = my_page.key_pressed(input)
 
-    logger.debug("Unhandled key pressed: " + str(input))
+        if not res:
+            logger.debug("Unhandled key pressed: " + str(input))
 
 palette = [
     ('issue-progress_completed'   , 'dark green' , 'light blue' ) ,
