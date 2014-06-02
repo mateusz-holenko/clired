@@ -10,6 +10,7 @@ import urwid.signals
 from views.IssueView import IssueView
 from views.MyPageView import MyPageView
 import core.Redmine
+import core.Configuration
 
 
 logging.basicConfig(filename='clired.log',level=logging.DEBUG)
@@ -27,6 +28,9 @@ argv = parser.parse_args()
 
 #if argv.issue is None:
 #    raise Exception("Issue number has to be passed as an argument")
+conf = core.Configuration.instance()
+if not conf.has_value('password'):
+    conf.set_value('password', getpass.getpass())
 
 def issue_selected(issue):
     urwid.MainLoop.widget = IssueView(issue)
