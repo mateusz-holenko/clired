@@ -39,16 +39,9 @@ class MyPageList(urwid.ListBox):
             self.set_focus(len(self.body) - 1)
         elif key == 'enter':
             core.Signals.emit_signal(self, 'selected', self.focus.value())
-            #self._ensure_signal()
-            #urwid.emit_signal(self, 'selected', self.focus.value())
             pass
         else:
             return key
-
-    def _ensure_signal(self):
-        if MyPageList._signal_registered:
-            urwid.register_signal(MyPageList.__class__, 'selected')
-            MyPageList._signal_registered = True
 
 
 class MyPageItem(urwid.AttrMap):
