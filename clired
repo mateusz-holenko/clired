@@ -26,8 +26,6 @@ parser.add_argument('-p', '--project', type=str)
 parser.add_argument('-u', '--username', type=str)
 argv = parser.parse_args()
 
-#if argv.issue is None:
-#    raise Exception("Issue number has to be passed as an argument")
 conf = core.Configuration.instance()
 if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
