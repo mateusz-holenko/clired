@@ -39,11 +39,12 @@ my_page = MyPageView(core.Redmine.instance().my_issues(False))
 urwid.signals.connect_signal(my_page, 'selected', issue_selected)
 
 def exit_on_cr(input):
-    if iv.key_pressed(input):
-        return
-
     if input == 'q':
-        raise urwid.ExitMainLoop()
+        if loop.widget == my_page.get_widget():
+            raise urwid.ExitMainLoop()
+        else:
+            loop.widget = my_page.get_widget()
+
     logger.debug("Unhandled key pressed: " + str(input))
 
 palette = [
