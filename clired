@@ -33,18 +33,10 @@ if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
 
 def issue_selected(issue):
-    urwid.MainLoop.widget = IssueView(issue)
+    loop.widget = IssueView(issue).get_widget()
 
-def xxx_handler():
-    print ('hejka')
-    import pdb
-    pdb.set_trace()
-
-#i = core.Redmine.instance().issue(argv.issue)
-#iv = IssueView(i)
-my_page = MyPageView(core.Redmine.instance().my_issues(True))
-urwid.signals.register_signal(my_page.__class__, 'xxx')
-urwid.signals.connect_signal(my_page, 'xxx', xxx_handler)
+my_page = MyPageView(core.Redmine.instance().my_issues(False))
+urwid.signals.connect_signal(my_page, 'selected', issue_selected)
 
 def exit_on_cr(input):
     if iv.key_pressed(input):
