@@ -12,6 +12,8 @@ from views.MyPageView import MyPageView
 import core.Redmine
 import core.Configuration
 
+import core.ViewManager
+
 
 logging.basicConfig(filename='clired.log',level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -30,30 +32,12 @@ conf = core.Configuration.instance()
 if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
 
-issue_view = None
-def issue_selected(issue):
-    global issue_view
-    issue_view = IssueView(issue)
-    loop.widget = issue_view.get_widget()
-
-my_page = MyPageView(core.Redmine.instance().my_issues(False))
-urwid.signals.connect_signal(my_page, 'selected', issue_selected)
-
 def exit_on_cr(input):
-    global issue_view
     if input == 'q':
-        if loop.widget == my_page.get_widget():
+        if not core.ViewManager.close_view():
             raise urwid.ExitMainLoop()
-        else:
-            loop.widget = my_page.get_widget()
-            issue_view = None
     else:
-        if issue_view is not None:
-            res = issue_view.key_pressed(input)
-        else:
-            res = my_page.key_pressed(input)
-
-        if not res:
+        if not core.ViewManager.get_current_view().key_pressed(input):
             logger.debug("Unhandled key pressed: " + str(input))
 
 palette = [
@@ -67,6 +51,14 @@ palette = [
     ('status_line-info'           , 'light blue' , 'default'    )
 ]
 
-loop = urwid.MainLoop(my_page.get_widget(), palette, unhandled_input=exit_on_cr)
+loop = urwid.MainLoop(urwid.Text("clired"), palette, unhandled_input=exit_on_cr)
+
+core.ViewManager.loop = loop
+
+my_page = MyPageView(core.Redmine.instance().my_issues(False))
+urwid.signals.connect_signal(my_page, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
+
+core.ViewManager.show_view(my_page)
+
 loop.run()
 print("Good bye!")
