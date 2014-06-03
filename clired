@@ -11,7 +11,6 @@ from views.IssueView import IssueView
 from views.MyPageView import MyPageView
 import core.Redmine
 import core.Configuration
-
 import core.ViewManager
 
 
@@ -32,7 +31,7 @@ conf = core.Configuration.instance()
 if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
 
-def exit_on_cr(input):
+def key_handler(input):
     if input == 'q':
         if not core.ViewManager.close_view():
             raise urwid.ExitMainLoop()
@@ -51,7 +50,7 @@ palette = [
     ('status_line-info'           , 'light blue' , 'default'    )
 ]
 
-loop = urwid.MainLoop(urwid.Text("clired"), palette, unhandled_input=exit_on_cr)
+loop = urwid.MainLoop(urwid.Text("clired"), palette, unhandled_input=key_handler)
 
 core.ViewManager.loop = loop
 
