@@ -54,10 +54,13 @@ loop = urwid.MainLoop(urwid.Text("clired"), palette, unhandled_input=key_handler
 
 core.ViewManager.loop = loop
 
-my_page = MyPageView(core.Redmine.instance().my_issues(False))
-urwid.signals.connect_signal(my_page, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
-
-core.ViewManager.show_view(my_page)
+if argv.issue:
+    issue_view = IssueView(core.Redmine.instance().issue(argv.issue))
+    core.ViewManager.show_view(issue_view)
+else:
+    my_page = MyPageView(core.Redmine.instance().my_issues(False))
+    urwid.signals.connect_signal(my_page, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
+    core.ViewManager.show_view(my_page)
 
 loop.run()
 print("Good bye!")
