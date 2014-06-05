@@ -1,4 +1,5 @@
 from core.View import View
+import core.ViewManager
 import urwid
 import core.Signals
 
@@ -7,23 +8,67 @@ class MyPageView(View):
 
     def __init__(self, issues):
         core.Signals.register_signal(self, 'selected')
+        core.Signals.register_signal(self, 'goto_issue')
+
         self._widget = MyPageList(urwid.SimpleListWalker([MyPageItem(issue) for issue in issues]))
-        urwid.signals.connect_signal(self._widget, 'selected', self._issue_selected)
+        self._goto = TaskGotoBar()
 
     def get_widget(self):
         return self._widget
 
     def key_pressed(self, key):
+        if self._goto.handle_key(key):
+            return True
+        elif key == 'enter':
+            val = self._goto.get_value()
+            if val is not None:
+                self._goto.clear()
+                core.Signals.emit_signal(self, 'goto_issue', val)
+                pass
+            else:
+                core.Signals.emit_signal(self, 'selected', self._widget.focus.value())
+            return True
+
         return False
 
-    def _issue_selected(self, issue):
-        core.Signals.emit_signal(self, 'selected', issue)
+
+class TaskGotoBar:
+    def __init__(self):
+        self._buffer = []
+
+    def handle_key(self, key):
+        if key >= '0' and key <= '9':
+            self._buffer.append(key)
+        elif key == 'esc':
+            self._buffer = []
+        elif key == 'backspace':
+            if len(self._buffer) > 0:
+                self._buffer.pop()
+        else:
+            return key != 'enter' and len(self._buffer) > 0
+
+        val = self.get_value()
+        if val is not None:
+            core.ViewManager.get_commandbar().set_text("Goto issue: " + str(val))
+        else:
+            core.ViewManager.get_commandbar().set_text("")
+
+        return True
+
+    def get_value(self):
+        if len(self._buffer) == 0:
+            return None
+        else:
+            return int(''.join(self._buffer))
+
+    def clear(self):
+        self._buffer = []
+        core.ViewManager.get_commandbar().set_text("")
 
 
 class MyPageList(urwid.ListBox):
 
     def __init__(self, args):
-        core.Signals.register_signal(self, 'selected')
         super(MyPageList, self).__init__(args)
 
     def keypress(self, size, key):
@@ -37,9 +82,6 @@ class MyPageList(urwid.ListBox):
             self.set_focus(0)
         elif key == 'G':
             self.set_focus(len(self.body) - 1)
-        elif key == 'enter':
-            core.Signals.emit_signal(self, 'selected', self.focus.value())
-            pass
         else:
             return key
 

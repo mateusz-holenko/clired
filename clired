@@ -60,6 +60,7 @@ if argv.issue:
 else:
     my_page = MyPageView(core.Redmine.instance().my_issues(False))
     urwid.signals.connect_signal(my_page, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
+    urwid.signals.connect_signal(my_page, 'goto_issue', lambda id: core.ViewManager.show_view(IssueView(core.Redmine.instance().issue(id))))
     core.ViewManager.show_view(my_page)
 
 loop.run()
