@@ -12,14 +12,14 @@ def get_current_view():
 def show_view(view):
     _views.append(view)
     if loop is not None:
-        loop.widget.set_body(get_current_view().get_widget())
+        loop.widget.set_body(get_current_view())
 
 
 def close_view():
     _views.pop()
     v = get_current_view()
     if v is not None:
-        loop.widget.set_body(v.get_widget())
+        loop.widget.set_body(v)
         return True
     else:
         return False

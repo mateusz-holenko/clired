@@ -1,31 +1,26 @@
 import urwid
 import core
-from core.View import View
 
 
-class IssueView(View):
+class IssueView(urwid.Frame):
 
     def __init__(self, issue):
         self._issue = issue
-        self._widget = urwid.Frame(MetadataElement(self._issue), header=HeaderElement(self._issue))
+        super(IssueView, self).__init__(MetadataElement(self._issue), header=HeaderElement(self._issue))
 
-    def get_widget(self):
-        return self._widget
-
-    def key_pressed(self, key):
+    def keypress(self, size, key):
         if key == 'm':
-            self._widget.set_body(MetadataElement(self._issue))
+            self.set_body(MetadataElement(self._issue))
         elif key == 'd':
-            self._widget.set_body(DescriptionElement(self._issue))
+            self.set_body(DescriptionElement(self._issue))
         elif key == 'n':
-            self._widget.set_body(JournalElement(self._issue))
+            self.set_body(JournalElement(self._issue))
         elif key == 'a':
-            self._widget.set_body(AttachmentsElement(self._issue))
+            self.set_body(AttachmentsElement(self._issue))
         elif key == 'w':
-            self._widget.set_body(WatchersElement(self._issue))
+            self.set_body(WatchersElement(self._issue))
         else:
-            return False
-        return True
+            return key
 
 
 class HeaderElement(urwid.Pile):

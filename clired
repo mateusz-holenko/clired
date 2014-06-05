@@ -35,9 +35,8 @@ def key_handler(input):
     if input == 'q':
         if not core.ViewManager.close_view():
             raise urwid.ExitMainLoop()
-    else:
-        if not core.ViewManager.get_current_view().key_pressed(input):
-            logger.debug("Unhandled key pressed: " + str(input))
+
+    logger.debug("Unhandled key pressed: " + str(input))
 
 palette = [
     ('issue-progress_completed'   , 'dark green' , 'light blue' ) ,
