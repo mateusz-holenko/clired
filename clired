@@ -50,8 +50,8 @@ palette = [
     ('status_line-info'           , 'light blue' , 'default'    )
 ]
 
-loop = urwid.MainLoop(urwid.Text("clired"), palette, unhandled_input=key_handler)
-
+main_widget = urwid.Frame(urwid.Text("clired"), footer=urwid.Text(""))
+loop = urwid.MainLoop(main_widget, palette, unhandled_input=key_handler)
 core.ViewManager.loop = loop
 
 if argv.issue:

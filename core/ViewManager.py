@@ -12,14 +12,21 @@ def get_current_view():
 def show_view(view):
     _views.append(view)
     if loop is not None:
-        loop.widget = get_current_view().get_widget()
+        loop.widget.set_body(get_current_view().get_widget())
 
 
 def close_view():
     _views.pop()
     v = get_current_view()
     if v is not None:
-        loop.widget = v.get_widget()
+        loop.widget.set_body(v.get_widget())
         return True
     else:
         return False
+
+
+def get_commandbar():
+    if loop is not None:
+        return loop.widget.get_footer()
+    else:
+        return None
