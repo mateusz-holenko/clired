@@ -1,0 +1,36 @@
+_buffer = []
+_bindings = {}
+
+def bind(keys, context, action):
+    if context not in _bindings:
+        _bindings[context] = {}
+    _bindings[context][keys] = action
+
+def map(key, context):
+    global _buffer
+    _buffer.append(key)
+
+    if context not in _bindings:
+        _buffer = []
+        return None
+
+    for b in _bindings[context]:
+        p = common_prefix(b, ''.join(_buffer))
+        if p == len(b):
+            _buffer = []
+            return _bindings[context][b]
+        elif p != 0:
+            flag = True
+
+    if flag:
+        return "MORE"
+    else:
+        _buffer = []
+        return None
+
+def common_prefix(l1, l2):
+    size = min(len(l1), len(l2))
+    for i in range(0, size - 1):
+        if l1[i] != l2[i]:
+            return i
+    return size
