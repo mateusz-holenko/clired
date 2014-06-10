@@ -30,7 +30,7 @@ def map(key, context):
 
 def common_prefix(l1, l2):
     size = min(len(l1), len(l2))
-    for i in range(0, size - 1):
+    for i in range(0, size):
         if l1[i] != l2[i]:
             return i
     return size
