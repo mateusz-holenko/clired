@@ -1,10 +1,12 @@
 _buffer = []
 _bindings = {}
 
+
 def bind(keys, context, action):
     if context not in _bindings:
         _bindings[context] = {}
     _bindings[context][keys] = action
+
 
 def map(key, context):
     global _buffer
