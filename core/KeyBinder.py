@@ -24,7 +24,7 @@ def map(key, context):
             flag = True
 
     if flag:
-        return "MORE"
+        return '_MORE'
     else:
         _buffer = []
         return None
