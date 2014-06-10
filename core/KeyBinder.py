@@ -29,9 +29,17 @@ def map(key, context):
         _buffer = []
         return None
 
+
 def common_prefix(l1, l2):
     size = min(len(l1), len(l2))
     for i in range(0, size):
         if l1[i] != l2[i]:
             return i
     return size
+
+bind('sm', 'IssuesView', 'SHOW_MY_ISSUES')
+bind('sam', 'IssuesView', 'SHOW_ALL_MY_ISSUES')
+bind('si', 'IssuesView', 'SHOW_ISSUES')
+bind('sai', 'IssuesView', 'SHOW_ALL_ISSUES')
+bind('gg', 'IssuesView', 'GOTO_TOP')
+bind('G', 'IssuesView', 'GOTO_BOTTOM')

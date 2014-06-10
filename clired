@@ -38,6 +38,27 @@ def key_handler(input):
 
     logger.debug("Unhandled key pressed: " + str(input))
 
+def create_issues_view(issues):
+    result = MyPageView(issues)
+    urwid.signals.connect_signal(result, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
+    urwid.signals.connect_signal(result, 'goto_issue', lambda id: core.ViewManager.show_view(IssueView(core.Redmine.instance().issue(id))))
+    urwid.signals.connect_signal(result, 'change_mode', change_main_view_mode)
+
+    return result
+
+def change_main_view_mode(mode):
+    if mode == 'my_issues':
+        core.ViewManager.replace_view(create_issues_view(core.Redmine.instance().my_issues(False)))
+    elif mode == 'all_my_issues':
+        core.ViewManager.replace_view(create_issues_view(core.Redmine.instance().my_issues(True)))
+    elif mode == 'issues':
+        core.ViewManager.replace_view(create_issues_view(core.Redmine.instance().issues(False)))
+    elif mode == 'all_issues':
+        core.ViewManager.replace_view(create_issues_view(core.Redmine.instance().issues(True)))
+    else:
+        raise Exception('Unsupported mode')
+
+
 palette = [
     ('issue-progress_completed'   , 'dark green' , 'light blue' ) ,
     ('issue-progress_incompleted' , 'black'      , 'white'      ) ,
@@ -57,9 +78,7 @@ if argv.issue:
     issue_view = IssueView(core.Redmine.instance().issue(argv.issue))
     core.ViewManager.show_view(issue_view)
 else:
-    my_page = MyPageView(core.Redmine.instance().my_issues(False))
-    urwid.signals.connect_signal(my_page, 'selected', lambda i: core.ViewManager.show_view(IssueView(i)))
-    urwid.signals.connect_signal(my_page, 'goto_issue', lambda id: core.ViewManager.show_view(IssueView(core.Redmine.instance().issue(id))))
+    my_page = create_issues_view(core.Redmine.instance().my_issues(False))
     core.ViewManager.show_view(my_page)
 
 loop.run()

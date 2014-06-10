@@ -25,6 +25,11 @@ def close_view():
         return False
 
 
+def replace_view(view):
+    close_view()
+    show_view(view)
+
+
 def get_commandbar():
     if loop is not None:
         return loop.widget.get_footer()

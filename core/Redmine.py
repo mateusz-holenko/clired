@@ -37,7 +37,7 @@ class Redmine(object):
             self._my_issues[show_closed] = self._redmine.issue.filter(assigned_to_id='me', status_id='open' if not show_closed else '*')
         return self._my_issues[show_closed]
 
-    def issues(self):
+    def issues(self, show_closed=False):
         if not hasattr(self, '_issues') or self._issues is None:
             self._issues = self.project().issues
         return self._issues
