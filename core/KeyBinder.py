@@ -14,6 +14,7 @@ def map(key, context):
         _buffer = []
         return None
 
+    flag = False
     for b in _bindings[context]:
         p = common_prefix(b, ''.join(_buffer))
         if p == len(b):
