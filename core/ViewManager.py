@@ -30,8 +30,16 @@ def replace_view(view):
     show_view(view)
 
 
+def is_last_view():
+    return len(_views) == 1
+
+
 def get_commandbar():
     if loop is not None:
         return loop.widget.get_footer()
     else:
         return None
+
+def set_commandbar(widget):
+    if loop is not None:
+        loop.widget.set_footer(widget)

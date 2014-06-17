@@ -12,6 +12,7 @@ from views.MyPageView import MyPageView
 import core.Redmine
 import core.Configuration
 import core.ViewManager
+from widgets.YesNoDialog import YesNoDialog
 
 
 logging.basicConfig(filename='clired.log',level=logging.DEBUG)
@@ -31,12 +32,28 @@ conf = core.Configuration.instance()
 if not conf.has_value('password'):
     conf.set_value('password', getpass.getpass())
 
-def key_handler(input):
-    if input == 'q':
-        if not core.ViewManager.close_view():
-            raise urwid.ExitMainLoop()
+def quitter(arg):
+    global quit_dialog
+    if arg == True:
+        raise urwid.ExitMainLoop()
+    else:
+        core.ViewManager.set_commandbar(urwid.Text(""))
+        quit_dialog = None
 
-    logger.debug("Unhandled key pressed: " + str(input))
+quit_dialog = None
+def key_handler(input):
+    global quit_dialog
+    if core.ViewManager.is_last_view():
+        if input == 'q' and quit_dialog is None:
+            quit_dialog = YesNoDialog("Do you really want to quit clired?")
+            urwid.signals.connect_signal(quit_dialog, 'dialog_finished', quitter)
+            core.ViewManager.set_commandbar(quit_dialog)
+        elif quit_dialog is not None:
+            quit_dialog.keypress(input)
+    elif input == 'q':
+        core.ViewManager.close_view()
+    else:
+        logger.debug("Unhandled key pressed: " + str(input))
 
 def create_issues_view(issues):
     result = MyPageView(issues)
